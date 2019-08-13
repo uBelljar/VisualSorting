@@ -20,7 +20,6 @@ namespace VisualSorting
         readonly int speed_1 = 1; //замедление создания и перемешивания
         int speed_2 = 10; //замедление сортировки
 
-
         Rectangle[] rectangles;
         bool refresh; //отключает обновление pictureBox
         bool inProgress; //Запрещает запуск других операций во время работы одной
@@ -40,13 +39,13 @@ namespace VisualSorting
             RenderArray(e);
         }
 
-        private void TrackBar1_ValueChanged(object sender, EventArgs e) //Переключатель скорости сортировки
+        private void TrackBar1_ValueChanged(object sender, EventArgs e) //Переключатель скорости сортировки 
         {
             speed_2 = trackBar1.Value;
             label1.Text = Convert.ToString(21 - speed_2);
         } 
 
-        async private void Button1_Click(object sender, EventArgs e) //New
+        async private void Button1_Click(object sender, EventArgs e) //New Array 
         {
             if (inProgress == false)
             {
@@ -64,7 +63,7 @@ namespace VisualSorting
             }
         }
 
-        async private void Button2_Click(object sender, EventArgs e) //Shuffle
+        async private void Button2_Click(object sender, EventArgs e) //Shuffle 
         {
             if (inProgress == false)
             {
@@ -82,7 +81,7 @@ namespace VisualSorting
             }
         }
 
-        async private void Button3_Click(object sender, EventArgs e) //Пузырьковая сортировка
+        async private void Button3_Click(object sender, EventArgs e) //Пузырьковая сортировка (сейчас включена) 
         {
             if (inProgress == false)
             {
@@ -100,7 +99,13 @@ namespace VisualSorting
             }
         }
 
-        async private void Button4_Click(object sender, EventArgs e) //Merge сортировка
+        private void Button3_Click2(object sender, EventArgs e) //Кнопка для альтернативной пузырьковой (включается в Дизайнере) 
+        {
+            if (refresh)
+                NewSortBubbleAsync();
+        }
+
+        async private void Button4_Click(object sender, EventArgs e) //Merge сортировка 
         {
             if (inProgress == false)
             {
@@ -119,6 +124,7 @@ namespace VisualSorting
         }
 
         //==============================================================================
+
         void NewArray()
         {
             if (rectangles == null)
@@ -262,7 +268,7 @@ namespace VisualSorting
                 }
             }
         }
-        void SwapRect(int i, int j) //меняет местами 2 элемента в массиве
+        void SwapRect(int i, int j) //меняет местами 2 элемента в массиве 
         {
             Rectangle temp;
             temp = rectangles[i];
@@ -289,6 +295,41 @@ namespace VisualSorting
         {
             refresh = false;
             await Task.Run(() => SortMerge());
+        }
+        async void NewSortBubbleAsync() //Альтернативная асинхронная пузырьковая сортировка 
+        {
+            refresh = false;
+            await Task.Run(() => 
+            {
+                if (rectangles != null)
+                {
+                    bool isSorted;
+                    int k = 0;
+                    do
+                    {
+                        isSorted = true;
+                        for (int i = 1; i < length - k; i++)
+                        {
+                            if (rectangles[i - 1].Height > rectangles[i].Height)
+                            {
+                                isSorted = false;
+                                SwapRect(i - 1, i);
+                                //Thread.Sleep(speed_2);
+                                if (InvokeRequired)
+                                    Invoke((Action)(() =>
+                                   {
+                                       pictureBox1.Refresh();
+                                   }));
+                            }
+                        }
+                        k++;
+                    }
+                    while (isSorted == false);
+                }
+                //Thread.Sleep(10); //Что-бы соритровка успела отрендериться
+                refresh = true;
+
+            });
         }
     }
 }
