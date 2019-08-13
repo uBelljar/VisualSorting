@@ -13,7 +13,7 @@ namespace VisualSorting
 {
     public partial class Form1 : Form
     {
-        readonly int length = 300; //количество столбцов
+        readonly int length = 256; //количество столбцов
         readonly int columnWidth = 2; //множитель ширины столбцов
         readonly int columnHeight = 1; //множитель высоты столбцов
         readonly int interval = 1; // интервал между столбцами
@@ -25,12 +25,15 @@ namespace VisualSorting
         bool refresh; //отключает обновление pictureBox
         bool inProgress; //Запрещает запуск других операций во время работы одной
 
+
         public Form1()
         {
             InitializeComponent();
             this.Size = new Size(length * (columnWidth + interval) + 50, length * columnHeight + 97); // установка размеров формы
             label1.Text = speed_2.ToString(); //начальное значение лейбла скорости
         }
+
+        //==============================================================================
 
         private void PictureBox1_Paint(object sender, PaintEventArgs e)
         {
@@ -115,6 +118,7 @@ namespace VisualSorting
             }
         }
 
+        //==============================================================================
         void NewArray()
         {
             if (rectangles == null)
@@ -286,7 +290,5 @@ namespace VisualSorting
             refresh = false;
             await Task.Run(() => SortMerge());
         }
-
-
     }
 }
