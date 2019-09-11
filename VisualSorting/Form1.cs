@@ -24,7 +24,6 @@ namespace VisualSorting
         bool refresh; //отключает обновление pictureBox
         bool inProgress; //Запрещает запуск других операций во время работы одной
 
-
         public Form1()
         {
             InitializeComponent();
